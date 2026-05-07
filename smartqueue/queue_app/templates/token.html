@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Take Token</title>
+{% load static %}
+<link rel="stylesheet" href="{% static 'new_style.css' %}">
+</head>
+<body>
+
+<div class="card">
+<h1>Generate Token</h1>
+
+<form method="POST">
+{% csrf_token %}
+
+<input type="text" name="name" placeholder="Enter Name" required>
+<input type="email" name="email" placeholder="Enter Email" required>
+<input type="text" name="phone" placeholder="Enter Phone Number" required>
+
+<button type="submit">Get Token</button>
+
+</form>
+
+</div>
+
+</body>
+</html>

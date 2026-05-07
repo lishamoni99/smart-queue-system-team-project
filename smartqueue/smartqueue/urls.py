@@ -19,13 +19,8 @@ from django.urls import path
 
 from django.contrib import admin
 from django.urls import path, include
-from django.shortcuts import redirect
-
-def home(request):
-    return redirect('student_login')
 
 urlpatterns = [
-    path('', home),
     path('admin/', admin.site.urls),
     path('', include('queue_app.urls')),
 ]

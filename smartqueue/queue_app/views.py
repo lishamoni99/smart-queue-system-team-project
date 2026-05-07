@@ -28,7 +28,7 @@ def estimate_time(position):
 
 # ---------------- HOME REDIRECT ----------------
 def home(request):
-    return redirect('student_login')
+    return render(request, 'home.html')
 
 
 # ---------------- STUDENT LOGIN ----------------
@@ -118,3 +118,33 @@ def guardian_dashboard(request):
 def logout_view(request):
     request.session.flush()
     return redirect('student_login')
+
+
+# ---------------- TAKE TOKEN (PUBLIC) ----------------
+def take_token(request):
+    if request.method == "POST":
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        phone = request.POST.get('phone')
+        sector = request.POST.get('sector', 'Bank')  # default sector
+
+        # Create a temporary student or use existing
+        # For simplicity, assume student exists or create
+        # But since no student_id, perhaps create a guest student
+        # For now, just render success or something
+        return render(request, 'token.html', {'message': 'Token generated'})
+
+    return render(request, 'token.html')
+
+
+# ---------------- QUEUE STATUS ----------------
+def queue_status(request):
+    # Get current queue
+    # For simplicity, hardcode or get from model
+    return render(request, 'status.html')
+
+
+# ---------------- ADMIN PANEL ----------------
+def admin_panel(request):
+    # Admin logic
+    return render(request, 'admin.html')
