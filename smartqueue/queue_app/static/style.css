@@ -48,21 +48,6 @@ button {
     border-radius: 10px;
     font-weight: bold;
     cursor: pointer;
-    transition: 0.3s;
-}
-
-button:hover {
-    transform: scale(1.03);
-}
-
-/* Links */
-a {
-    display: inline-block;
-    margin-top: 10px;
-    color: #7c4dff;
-    text-decoration: none;
-    font-weight: bold;
-}
 }
 
 button:hover {

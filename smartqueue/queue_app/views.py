@@ -1,150 +1,56 @@
 from django.shortcuts import render, redirect
+from .models import Queue
 
-# ---------------- SETTINGS ----------------
-TIME_PER_PERSON = 3
+# -------- TOKEN GENERATE --------
+def generate_token(request):
+    student_id = request.session.get("student_id")
+    sector = request.session.get("sector")
 
-# ---------------- SECTOR PREFIX ----------------
-def get_prefix(sector):
-    if sector == "Bank":
-        return "B"
-    elif sector == "Library":
-        return "L"
-    elif sector == "UAP Office":
-        return "O"
-    elif sector == "Canteen":
-        return "C"
-    return "X"
+    if not student_id or not sector:
+        return redirect("student_login")
 
+    count = Queue.objects.filter(sector=sector).count()
+    position = count + 1
 
-# ---------------- TOKEN ----------------
-def generate_token(prefix, number):
-    return f"{prefix}{number}"
+    prefix = {
+        "Bank": "B",
+        "Library": "L",
+        "Office": "O",
+        "Canteen": "C"
+    }
 
+    token = prefix.get(sector, "X") + str(position)
 
-# ---------------- TIME ----------------
-def estimate_time(position):
-    return position * TIME_PER_PERSON
+    Queue.objects.create(
+        student_id=student_id,
+        sector=sector,
+        token=token,
+        position=position
+    )
 
+    request.session["token"] = token
+    request.session["position"] = position
 
-# ---------------- HOME REDIRECT ----------------
-def home(request):
-    return render(request, 'home.html')
-
-
-# ---------------- STUDENT LOGIN ----------------
-def student_login(request):
-    if request.method == "POST":
-        student_id = request.POST.get('student_id')
-        password = request.POST.get('password')
-
-        if student_id and password:
-            request.session['user_type'] = 'student'
-            request.session['student_id'] = student_id
-            return redirect('sector_select')
-
-    return render(request, 'student_login.html')
+    return redirect("student_dashboard")
 
 
-# ---------------- SECTOR SELECT ----------------
-def sector_select(request):
-    if request.session.get('user_type') != 'student':
-        return redirect('student_login')
+# -------- QUEUE LIST (ADMIN VIEW) --------
+def queue_list(request):
+    sector = request.session.get("sector")
+    data = Queue.objects.filter(sector=sector).order_by("position")
 
-    if request.method == "POST":
-        sector = request.POST.get('sector')
-
-        request.session['sector'] = sector
-
-        # queue number (temporary simple logic)
-        queue_number = request.session.get('queue_number', 1)
-
-        prefix = get_prefix(sector)
-        token = generate_token(prefix, queue_number)
-
-        request.session['token'] = token
-        request.session['position'] = queue_number
-
-        return redirect('student_dashboard')
-
-    return render(request, 'sector_select.html')
+    return render(request, "queue_list.html", {"queues": data})
 
 
-# ---------------- STUDENT DASHBOARD ----------------
-def student_dashboard(request):
-    if request.session.get('user_type') != 'student':
-        return redirect('student_login')
-
-    position = request.session.get('position', 1)
-
-    return render(request, 'student_dashboard.html', {
-        'student_id': request.session.get('student_id'),
-        'sector': request.session.get('sector'),
-        'token': request.session.get('token'),
-        'position': position,
-        'estimated_time': estimate_time(position)
-    })
+# -------- UPDATE STATUS --------
+def mark_served(request, id):
+    q = Queue.objects.get(id=id)
+    q.status = "served"
+    q.save()
+    return redirect("queue_list")
 
 
-# ---------------- GUARDIAN LOGIN ----------------
-def guardian_login(request):
-    if request.method == "POST":
-        phone = request.POST.get('phone')
-
-        if phone:
-            request.session['user_type'] = 'guardian'
-            request.session['phone'] = phone
-            return redirect('guardian_dashboard')
-
-    return render(request, 'guardian_login.html')
-
-
-# ---------------- GUARDIAN DASHBOARD ----------------
-def guardian_dashboard(request):
-    if request.session.get('user_type') != 'guardian':
-        return redirect('guardian_login')
-
-    position = request.session.get('position', 1)
-
-    return render(request, 'guardian_dashboard.html', {
-        'phone': request.session.get('phone'),
-        'sector': request.session.get('sector'),
-        'token': request.session.get('token'),
-        'position': position,
-        'estimated_time': estimate_time(position)
-    })
-
-
-# ---------------- LOGOUT ----------------
-def logout_view(request):
-    request.session.flush()
-    return redirect('student_login')
-
-
-# ---------------- TAKE TOKEN (PUBLIC) ----------------
-def take_token(request):
-    if request.method == "POST":
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        phone = request.POST.get('phone')
-        sector = request.POST.get('sector', 'Bank')  # default sector
-
-        # Create a temporary student or use existing
-        # For simplicity, assume student exists or create
-        # But since no student_id, perhaps create a guest student
-        # For now, just render success or something
-        return render(request, 'token.html', {'message': 'Token generated'})
-
-    return render(request, 'token.html')
-
-
-# ---------------- QUEUE STATUS ----------------
-def queue_status(request):
-    # Get current queue
-    # For simplicity, hardcode or get from model
-    return render(request, 'status.html')
-
-
-# ---------------- ADMIN PANEL ----------------
-def admin_panel(request):
-    # Admin logic
-    return render(request, 'admin.html')
+# -------- DELETE TOKEN --------
+def delete_token(request, id):
+    Queue.objects.get(id=id).delete()
+    return redirect("queue_list")
