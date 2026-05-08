@@ -28,5 +28,6 @@ urlpatterns = [
     path('', home),
     path('admin/', admin.site.urls),
     path('', include('queue_app.urls')),
-    path("sector/", include("sector.urls")),
 ]
+
+path('history/', include('history.urls')),

@@ -38,11 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'accounts',
     'queue_app',
-    'dashboard',
-    'sector',
-    #'adminpanel',
+    'history',
 ]
 
 MIDDLEWARE = [

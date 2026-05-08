@@ -9,19 +9,22 @@
 
 <div class="container">
 
-    <h2> Select Sector</h2>
+    <h2>Select Sector</h2>
 
     <form method="POST">
         {% csrf_token %}
 
-        <select name="sector">
-            <option>Bank</option>
-            <option>Library</option>
-            <option>UAP Office</option>
-            <option>Canteen</option>
+        <select name="sector" required>
+
+            <option value="Bank">Bank</option>
+            <option value="Library">Library</option>
+            <option value="UAP Office">UAP Office</option>
+            <option value="Canteen">Canteen</option>
+
         </select>
 
-        <button type="submit">Generate Token </button>
+        <button type="submit">Generate Token</button>
+
     </form>
 
 </div>

@@ -2,8 +2,14 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("generate-token/", views.generate_token, name="generate_token"),
-    path("queue-list/", views.queue_list, name="queue_list"),
-    path("served/<int:id>/", views.mark_served, name="mark_served"),
-    path("delete/<int:id>/", views.delete_token, name="delete_token"),
+    path('', views.home),
+
+    path('student-login/', views.student_login, name='student_login'),
+    path('sector-select/', views.sector_select, name='sector_select'),
+    path('student-dashboard/', views.student_dashboard, name='student_dashboard'),
+
+    path('guardian-login/', views.guardian_login, name='guardian_login'),
+    path('guardian-dashboard/', views.guardian_dashboard, name='guardian_dashboard'),
+
+    path('logout/', views.logout_view, name='logout'),
 ]
