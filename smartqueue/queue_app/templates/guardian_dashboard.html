@@ -26,7 +26,13 @@
         <p><b>Position:</b> {{ position }}</p>
         <p><b> Estimated Time:</b> {{ estimated_time }} min</p>
     </div>
+<div class="card">
 
+    <a href="{% url 'cancel_token' %}">
+        <button type="button">Cancel Token</button>
+    </a>
+
+    </div>
     <a href="/logout/">Logout</a>
 
 </div>

@@ -58,8 +58,7 @@ def student_login(request):
 
 # ---------------- SECTOR SELECT ----------------
 def sector_select(request):
-
-    if request.session.get('user_type') != 'student':
+    if request.session.get('user_type') not in ['student', 'guardian']:
         return redirect('student_login')
 
     if request.method == "POST":
@@ -85,6 +84,9 @@ def sector_select(request):
 
         request.session['token'] = token
         request.session['position'] = queue_number
+
+        if request.session.get('user_type') == 'guardian':
+            return redirect('guardian_dashboard')
 
         return redirect('student_dashboard')
 
@@ -136,7 +138,7 @@ def guardian_login(request):
         if phone:
             request.session['user_type'] = 'guardian'
             request.session['phone'] = phone
-            return redirect('guardian_dashboard')
+            return redirect('sector_select')
 
     return render(request, 'guardian_login.html')
 
@@ -146,7 +148,10 @@ def guardian_dashboard(request):
     if request.session.get('user_type') != 'guardian':
         return redirect('guardian_login')
 
-    position = request.session.get('position', 1)
+    position = request.session.get('position')
+
+    if position is None:
+        position = 1
     # HISTORY SAVE (GUARDIAN)
     QueueHistory.objects.create(
         user_type="guardian",
@@ -168,6 +173,31 @@ def guardian_dashboard(request):
         'position': position,
         'estimated_time': estimate_time(position)
     })
+
+
+
+# ---------------- CANCEL TOKEN ----------------
+def cancel_token(request):
+
+    token = request.session.get('token')
+
+    if token:
+
+        QueueHistory.objects.filter(
+            token_number=token
+        ).delete()
+
+    # decrease queue number
+    queue_number = request.session.get('queue_number', 1)
+
+    if queue_number > 1:
+        request.session['queue_number'] = queue_number - 1
+
+    request.session['token'] = None
+    request.session['sector'] = None
+    request.session['position'] = None
+
+    return redirect('sector_select')
 
 
 # ---------------- LOGOUT ----------------
