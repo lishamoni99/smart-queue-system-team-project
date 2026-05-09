@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Reviews</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .container {
+            margin-top: 20px;
+        }
+        .review-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .sector-badge {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+        .rating {
+            color: #ffc107;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .comment {
+            color: #666;
+            font-size: 14px;
+            margin-top: 10px;
+            font-style: italic;
+        }
+        .date {
+            color: #999;
+            font-size: 12px;
+        }
+        .header-buttons {
+            margin-bottom: 20px;
+        }
+        .btn-back {
+            background-color: #6c757d;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-back:hover {
+            background-color: #5a6268;
+            text-decoration: none;
+            color: white;
+        }
+        .btn-view-all {
+            background-color: #28a745;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-left: 10px;
+        }
+        .btn-view-all:hover {
+            background-color: #218838;
+            text-decoration: none;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-buttons">
+            <a href="{% url 'student_dashboard' %}" class="btn-back">← Back to Dashboard</a>
+            <a href="{% url 'all_reviews' %}" class="btn-view-all">View All Reviews →</a>
+        </div>
+
+        <h1 class="mb-4">📝 My Reviews</h1>
+
+        {% if reviews %}
+            {% for review in reviews %}
+            <div class="review-card">
+                <div class="review-header">
+                    <div>
+                        <span class="sector-badge">{{ review.sector }}</span>
+                    </div>
+                    <div class="rating">
+                        {% for i in "01234" %}
+                            {% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}
+                        {% endfor %}
+                        ({{ review.rating }}/5)
+                    </div>
+                </div>
+                {% if review.comment %}
+                <div class="comment">
+                    "{{ review.comment }}"
+                </div>
+                {% endif %}
+                <div class="date">
+                    Token: {{ review.token_number }} | {{ review.created_at|date:"M d, Y H:i" }}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-info">
+                You haven't submitted any reviews yet. Complete a queue and submit your feedback!
+            </div>
+        {% endif %}
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

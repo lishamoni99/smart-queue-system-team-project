@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'emergency_app',
     'queue_app',
     'history',
+    'review',
 ]
 
 MIDDLEWARE = [

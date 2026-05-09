@@ -15,16 +15,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-
-from django.contrib import admin
 from django.urls import path, include
 from django.shortcuts import redirect
-
-from django.contrib import admin
-from django.urls import path, include
-from django.shortcuts import redirect
-
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -40,7 +32,7 @@ urlpatterns = [
     path('history/', include('history.urls')),
     path('notifications', include('notifications.urls')),
     path('emergency', include('emergency_app.urls')),
-
+    path('review/', include('review.urls')),
 ]
 
 # ---------------- MEDIA FILES ----------------

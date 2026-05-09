@@ -43,16 +43,37 @@ def home(request):
 
 # ---------------- STUDENT LOGIN ----------------
 def student_login(request):
+    error = None
+    
     if request.method == "POST":
         student_id = request.POST.get('student_id')
         password = request.POST.get('password')
 
         if student_id and password:
-            request.session['user_type'] = 'student'
-            request.session['student_id'] = student_id
-            return redirect('sector_select')
+            # Try to authenticate the student
+            try:
+                student = Student.objects.get(student_id=student_id, password=password)
+                request.session['user_type'] = 'student'
+                request.session['student_id'] = student_id
+                return redirect('sector_select')
+            except Student.DoesNotExist:
+                # Check if student exists but wrong password
+                if Student.objects.filter(student_id=student_id).exists():
+                    error = "Invalid password. Please try again."
+                else:
+                    # Auto-create student if they don't exist (first-time login)
+                    Student.objects.create(
+                        student_id=student_id,
+                        password=password,
+                        name=f"Student {student_id}"
+                    )
+                    request.session['user_type'] = 'student'
+                    request.session['student_id'] = student_id
+                    return redirect('sector_select')
+        else:
+            error = "Please enter both student ID and password."
 
-    return render(request, 'student_login.html')
+    return render(request, 'student_login.html', {'error': error})
 
 
 # ---------------- SECTOR SELECT ----------------
@@ -121,7 +142,16 @@ def student_dashboard(request):
         return redirect('student_login')
 
     student_id = request.session.get('student_id')
-    student = Student.objects.get(student_id=student_id)
+    try:
+        student = Student.objects.get(student_id=student_id)
+    except Student.DoesNotExist:
+        # Handle case where student was deleted
+        Student.objects.create(
+            student_id=student_id,
+            password="default",
+            name=f"Student {student_id}"
+        )
+        student = Student.objects.get(student_id=student_id)
 
     position = request.session.get('position', 1)
     waiting_time = estimate_time(position)

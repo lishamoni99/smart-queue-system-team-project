@@ -2,14 +2,77 @@
 <html>
 <head>
     <title>Smart Queue Home</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial;
+            margin-top: 100px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .btn-custom {
+            padding: 15px 30px;
+            margin: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        .btn-student {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-student:hover {
+            background-color: #0056b3;
+            color: white;
+            text-decoration: none;
+        }
+        .btn-guardian {
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-guardian:hover {
+            background-color: #1e7e34;
+            color: white;
+            text-decoration: none;
+        }
+        .btn-reviews {
+            background-color: #ffc107;
+            color: #333;
+        }
+        .btn-reviews:hover {
+            background-color: #e0a800;
+            color: #333;
+            text-decoration: none;
+        }
+    </style>
 </head>
-<body style="text-align:center; font-family:Arial; margin-top:100px;">
-
-    <h1>Welcome to Smart Queue System</h1>
-
-    <a href="/student-login/">Student Login</a>
-    <br><br>
-    <a href="/guardian-login/">Guardian Login</a>
-
+<body>
+    <div class="container">
+        <h1>🎯 Welcome to Smart Queue System</h1>
+        
+        <div class="button-group">
+            <a href="/student-login/" class="btn-custom btn-student">👤 Student Login</a>
+            <br>
+            <a href="/guardian-login/" class="btn-custom btn-guardian">👨‍👩‍👧 Guardian Login</a>
+            <br>
+            <a href="{% url 'all_reviews' %}" class="btn-custom btn-reviews">⭐ View Reviews & Ratings</a>
+        </div>
+    </div>
 </body>
 </html>
