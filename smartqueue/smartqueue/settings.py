@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'notifications',
+    'emergency_app',
     'queue_app',
     'history',
 ]

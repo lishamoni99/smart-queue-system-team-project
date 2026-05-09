@@ -2,7 +2,6 @@
 <html>
 <head>
     <title>Select Sector</title>
-    <link rel="stylesheet" href="/static/style.css">
 </head>
 
 <body>
@@ -15,13 +14,19 @@
         {% csrf_token %}
 
         <select name="sector" required>
-
             <option value="Bank">Bank</option>
             <option value="Library">Library</option>
             <option value="UAP Office">UAP Office</option>
             <option value="Canteen">Canteen</option>
-
         </select>
+
+        <br><br>
+
+        <!-- EMERGENCY CHECKBOX -->
+        <input type="checkbox" name="emergency" id="emergency">
+        <label for="emergency">Mark as Emergency (Prioritize my turn)</label>
+
+        <br><br>
 
         <button type="submit">Generate Token</button>
 

@@ -36,9 +36,11 @@ def home(request):
 urlpatterns = [
     path('', home),
     path('admin/', admin.site.urls),
-
     path('', include('queue_app.urls')),
     path('history/', include('history.urls')),
+    path('notifications', include('notifications.urls')),
+    path('emergency', include('emergency_app.urls')),
+
 ]
 
 # ---------------- MEDIA FILES ----------------

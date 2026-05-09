@@ -56,16 +56,25 @@ def student_login(request):
 
 
 # ---------------- SECTOR SELECT ----------------
+from django.shortcuts import render, redirect
+from notifications.models import Notification  # Notification pathanor jonno
+from emergency_app.models import EmergencyRequest  # Emergency record rakhar jonno
+
+
 def sector_select(request):
+    # Check koro user login kora kina
     if request.session.get('user_type') not in ['student', 'guardian']:
         return redirect('student_login')
 
     if request.method == "POST":
         sector = request.POST.get('sector')
+        is_emergency = request.POST.get('emergency') == 'on'
+        student_id = request.session.get('student_id')
+
         request.session['sector'] = sector
 
+        # --- Standard Queue Logic ---
         queue_number = request.session.get('queue_number')
-
         if queue_number is None:
             queue_number = 1
         else:
@@ -77,7 +86,27 @@ def sector_select(request):
         token = generate_token(prefix, queue_number)
 
         request.session['token'] = token
-        request.session['position'] = queue_number
+
+        # --- EMERGENCY LOGIC ADDED HERE ---
+        if is_emergency:
+
+            EmergencyRequest.objects.create(
+                student_id=student_id,
+                reason=f"Standard Emergency for {sector}"
+            )
+
+            request.session['position'] = 1
+            msg = f"EMERGENCY: Your token {token} has been prioritized for {sector}."
+        else:
+            request.session['position'] = queue_number
+            msg = f"Success! Your token {token} has been generated for {sector}."
+
+        # --- NOTIFICATION TRIGGER ---
+
+        Notification.objects.create(
+            student_id=student_id,
+            message=msg
+        )
 
         if request.session.get('user_type') == 'guardian':
             return redirect('guardian_dashboard')
@@ -88,38 +117,50 @@ def sector_select(request):
 
 # ---------------- STUDENT DASHBOARD ----------------
 def student_dashboard(request):
-
     if request.session.get('user_type') != 'student':
         return redirect('student_login')
-    student = Student.objects.get(student_id=request.session.get('student_id'))
+
+    student_id = request.session.get('student_id')
+    student = Student.objects.get(student_id=student_id)
+
     position = request.session.get('position', 1)
+    waiting_time = estimate_time(position)
+
+
+    if waiting_time <= 5:
+        already_notified = Notification.objects.filter(
+            student_id=student_id,
+            message__contains="coming in 5 minutes"
+        ).exists()
+
+        if not already_notified:
+            Notification.objects.create(
+                student_id=student_id,
+                message=f"Please be ready! Your turn is coming in {waiting_time} minutes."
+            )
 
 
     history = QueueHistory.objects.filter(
-        student_id=request.session.get('student_id')
+        student_id=student_id
     ).order_by('-id')[:5]
 
     QueueHistory.objects.create(
         user_type="student",
-        student_id=request.session.get('student_id'),
+        student_id=student_id,
         phone_number=None,
         token_number=request.session.get('token'),
         sector=request.session.get('sector'),
-        waiting_time=estimate_time(position)
+        waiting_time=waiting_time
     )
 
     return render(request, 'student_dashboard.html', {
-
-        'student_id': request.session.get('student_id'),
+        'student_id': student_id,
         'sector': request.session.get('sector'),
         'token': request.session.get('token'),
         'position': position,
-        'estimated_time': estimate_time(position),
-
+        'estimated_time': waiting_time,
         'history': history,
         'student': student,
-
-
     })
 # ---------------- GUARDIAN LOGIN ----------------
 def guardian_login(request):
