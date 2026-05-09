@@ -1,3 +1,13 @@
 from django.db import models
 
-# Create your models here.
+
+class EmergencyRequest(models.Model):
+    student_id = models.CharField(max_length=100)
+    reason = models.TextField(blank=True, null=True)
+    is_approved = models.BooleanField(default=False)  # Admin approve korle priority pabe
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Emergency for {self.student_id}"
+
+
