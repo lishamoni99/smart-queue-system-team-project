@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import Queue
 from history.models import QueueHistory
+from notifications.models import Notification
 
 # ---------------- SETTINGS ----------------
 TIME_PER_PERSON = 3
@@ -39,7 +40,7 @@ def estimate_time(position):
 
 # ---------------- HOME REDIRECT ----------------
 def home(request):
-    return redirect('student_login')
+    return render(request, 'home.html')
 
 
 # ---------------- STUDENT LOGIN ----------------
@@ -62,22 +63,18 @@ def sector_select(request):
         return redirect('student_login')
 
     if request.method == "POST":
-
         sector = request.POST.get('sector')
         print("SECTOR:", sector)
-
         request.session['sector'] = sector
 
-        # ---------------- FIX: auto increment token ----------------
+        # FIX: auto increment token logic
         queue_number = request.session.get('queue_number')
-
         if queue_number is None:
             queue_number = 1
         else:
             queue_number = int(queue_number) + 1
 
         request.session['queue_number'] = queue_number
-        # ----------------------------------------------------------
 
         prefix = get_prefix(sector)
         token = generate_token(prefix, queue_number)
@@ -85,12 +82,18 @@ def sector_select(request):
         request.session['token'] = token
         request.session['position'] = queue_number
 
+        # --- NOTIFICATION TRIGGER: Token Generation ---
+        Notification.objects.create(
+            student_id=request.session.get('student_id'),
+            message=f"Your token {token} has been generated for {sector}. Your current position is {queue_number}."
+        )
+
         if request.session.get('user_type') == 'guardian':
             return redirect('guardian_dashboard')
 
         return redirect('student_dashboard')
 
-    return render(request, 'sector_select.html')
+    return render(request, template_name='sector_select.html')
 
 # ---------------- STUDENT DASHBOARD ----------------
 def student_dashboard(request):
