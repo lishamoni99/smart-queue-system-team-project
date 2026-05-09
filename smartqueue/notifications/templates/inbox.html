@@ -2,9 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Inbox</title>
 </head>
 <body>
-
+    <h2>Notifications for Student ID: {{ request.session.student_id }}</h2>
+    <hr>
+    {% if notifications %}
+        {% for note in notifications %}
+            <div style="padding: 10px; border-bottom: 1px solid #ddd; background: {% if not note.is_read %}#f0f8ff{% else %}white{% endif %};">
+                <p>{{ note.message }}</p>
+                <small>{{ note.created_at }}</small>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No messages yet.</p>
+    {% endif %}
+    <br>
+    <a href="{% url 'student_dashboard' %}">Back to Dashboard</a>
 </body>
 </html>
