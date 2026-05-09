@@ -6,6 +6,7 @@ class Feedback(models.Model):
     comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    image = models.ImageField(upload_to='feedback_images/' , null=True, blank=True)
 
     def __str__(self):
         return self.student_name

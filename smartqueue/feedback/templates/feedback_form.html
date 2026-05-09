@@ -11,12 +11,14 @@
 </head>
 <body>
     <h2>Submit Your Feedback</h2>
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <input type="text" name="student_name" placeholder="Enter Your Name" required>
         <input type="number" name="rating" placeholder="Rating (1-5)" min="1" max="5" required>
         <textarea name="comment" placeholder="Write your feedback here..." rows="4" required></textarea>
-        <button type="submit">Submit Feedback</button>
+        <label>Upload Photo:</label>
+        <input type="file" name="image" accept="image/*" capture="none">
+        <button type="submit">Submit</button>
     </form>
 </body>
 </html>
