@@ -2,10 +2,15 @@ from django.db import models
 
 
 # ---------------- STUDENT MODEL ----------------
+from django.db import models
+
+
 class Student(models.Model):
     student_id = models.CharField(max_length=20, unique=True)
     password = models.CharField(max_length=100)
     name = models.CharField(max_length=100, default="Student")
+
+    image = models.ImageField(upload_to='students/', null=True, blank=True)
 
     def __str__(self):
         return self.student_id

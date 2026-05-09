@@ -1,8 +1,11 @@
-{% load static %}
+{{% load static %}
+
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Student Dashboard</title>
+
     <link rel="stylesheet" href="{% static 'style.css' %}">
 </head>
 
@@ -12,30 +15,85 @@
 
     <h2>Smart Queue</h2>
 
-    <div class="card">
-        <p><b>ID:</b> {{ student_id }}</p>
-        <p><b>Sector:</b> {{ sector }}</p>
-    </div>
-
-    <div class="card">
-        <p> Your Token</p>
-        <div class="token">{{ token }}</div>
-    </div>
-
+    <!-- Student Information -->
 <div class="card">
 
-    <a href="{% url 'cancel_token' %}">
-        <button class="cancel-btn">Cancel Token</button>
-    </a>
+    {% if student.image %}
+        <img src="{{ student.image.url }}" width="120" height="120">
+    {% endif %}
 
-    </div>
+    <p><b>ID:</b> {{ student_id }}</p>
+
+    <p><b>Sector:</b> {{ sector }}</p>
+
+</div>
+
+    <!-- Current Token -->
     <div class="card">
-        <p><b>Position:</b> {{ position }}</p>
-        <p><b>Estimated Time:</b> {{ estimated_time }} min</p>
+
+        <p>Your Token</p>
+
+        <div class="token">
+            {{ token }}
+        </div>
+
     </div>
 
-    <a href="/logout/"> Logout</a> <br> <hr>
-    <a href="{% url 'inbox' %}">View Notifications</a>
+    <!-- Position + Estimated Time -->
+    <div class="card">
+
+        <p><b>Position:</b> {{ position }}</p>
+
+        <p><b>Estimated Time:</b> {{ estimated_time }} min</p>
+
+    </div>
+
+    <!-- Cancel Token -->
+    <div class="card">
+
+        <a href="{% url 'cancel_token' %}">
+
+            <button class="cancel-btn">
+                Cancel Token
+            </button>
+
+        </a>
+
+    </div>
+
+    <!-- Previous History -->
+    <div class="card">
+
+        <h3>Previous History</h3>
+
+        {% for item in history %}
+
+            <p>
+                <b>Token:</b> {{ item.token_number }}
+            </p>
+
+            <p>
+                <b>Sector:</b> {{ item.sector }}
+            </p>
+
+            <p>
+                <b>Waiting Time:</b> {{ item.waiting_time }} min
+            </p>
+
+            <hr>
+
+        {% empty %}
+
+            <p>No History Found</p>
+
+        {% endfor %}
+
+    </div>
+
+    <!-- Logout -->
+    <a href="/logout/">
+        Logout
+    </a>
 
 </div>
 

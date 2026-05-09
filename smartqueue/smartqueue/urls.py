@@ -14,22 +14,33 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-
+from django.contrib import admin
+from django.urls import path
 
 from django.contrib import admin
 from django.urls import path, include
-from feedback.views import feedback_view
 from django.shortcuts import redirect
 
+from django.contrib import admin
+from django.urls import path, include
+from django.shortcuts import redirect
+
+from django.conf import settings
+from django.conf.urls.static import static
+
+# ---------------- HOME ----------------
 def home(request):
     return redirect('student_login')
 
+# ---------------- URL PATTERNS ----------------
 urlpatterns = [
     path('', home),
     path('admin/', admin.site.urls),
-    path('', include('queue_app.urls')),
-    path('feedback/', feedback_view, name='feedback'),
-    path('history/', include('history.urls')),
-    path('notifications/', include('notifications.urls')),
 
+    path('', include('queue_app.urls')),
+    path('history/', include('history.urls')),
 ]
+
+# ---------------- MEDIA FILES ----------------
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

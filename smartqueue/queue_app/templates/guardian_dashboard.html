@@ -26,6 +26,28 @@
         <p><b>Position:</b> {{ position }}</p>
         <p><b> Estimated Time:</b> {{ estimated_time }} min</p>
     </div>
+
+    <div class="card">
+
+    <h3>Previous History</h3>
+
+    {% for item in history %}
+
+        <p><b>Token:</b> {{ item.token_number }}</p>
+
+        <p><b>Sector:</b> {{ item.sector }}</p>
+
+        <p><b>Waiting Time:</b> {{ item.waiting_time }} min</p>
+
+        <hr>
+
+    {% empty %}
+
+        <p>No History Found</p>
+
+    {% endfor %}
+
+</div>
 <div class="card">
 
     <a href="{% url 'cancel_token' %}">
@@ -33,6 +55,7 @@
     </a>
 
     </div>
+
     <a href="/logout/">Logout</a>
 
 </div>
