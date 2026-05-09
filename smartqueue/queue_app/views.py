@@ -97,41 +97,45 @@ def sector_select(request):
 
 # ---------------- STUDENT DASHBOARD ----------------
 def student_dashboard(request):
-
     if request.session.get('user_type') != 'student':
         return redirect('student_login')
 
     position = request.session.get('position', 1)
+    student_id = request.session.get('student_id')
+    waiting_time = estimate_time(position)
 
-    # Save history
+
     QueueHistory.objects.create(
         user_type="student",
-        student_id=request.session.get('student_id'),
-
+        student_id=student_id,
         phone_number=None,
-
         token_number=request.session.get('token'),
-
         sector=request.session.get('sector'),
-
-        waiting_time=estimate_time(position)
-
+        waiting_time=waiting_time
     )
 
-    return render(request, 'student_dashboard.html', {
+    # --- NOTIFICATION PART (Add this) ---
+    # 1. Feature: Time Alert (Jodi waiting time 5 min ba tar kom hoy)
+    if waiting_time <= 5:
+        # Age check koro oi student-ke ei alert-ta deya hoyeche kina
+        already_alerted = Notification.objects.filter(
+            student_id=student_id,
+            message__contains="coming in 5 minutes"
+        ).exists()
 
-        'student_id': request.session.get('student_id'),
+        if not already_alerted:
+            Notification.objects.create(
+                student_id=student_id,
+                message=f"Please be ready! Your turn is coming in {waiting_time} minutes."
+            )
 
+    return render(request, template_name='student_dashboard.html', context={
+        'student_id': student_id,
         'sector': request.session.get('sector'),
-
         'token': request.session.get('token'),
-
         'position': position,
-
-        'estimated_time': estimate_time(position)
-
+        'estimated_time': waiting_time
     })
-
 
 # ---------------- GUARDIAN LOGIN ----------------
 def guardian_login(request):
