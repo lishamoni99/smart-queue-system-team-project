@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student History</title>
+
+    <style>
+
+        body{
+            font-family: Arial;
+            background-color: #f4f4f4;
+            padding: 30px;
+        }
+
+        table{
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td{
+            border: 1px solid #ccc;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th{
+            background-color: #007bff;
+            color: white;
+        }
+
+    </style>
+
+</head>
+<body>
+
+    <h2>Queue History</h2>
+
+    <table>
+
+        <tr>
+            <th>Token</th>
+            <th>Sector</th>
+            <th>Waiting Time</th>
+            <th>Date</th>
+        </tr>
+
+        {% for item in history %}
+
+        <tr>
+
+            <td>{{ item.token_number }}</td>
+
+            <td>{{ item.sector }}</td>
+
+            <td>{{ item.waiting_time }} Minutes</td>
+
+            <td>{{ item.service_date }}</td>
+
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+</body>
+</html>

@@ -10,10 +10,6 @@ urlpatterns = [
 
     path('guardian-login/', views.guardian_login, name='guardian_login'),
     path('guardian-dashboard/', views.guardian_dashboard, name='guardian_dashboard'),
-
+    path('cancel-token/', views.cancel_token, name='cancel_token'),
     path('logout/', views.logout_view, name='logout'),
-
-    path('take-token/', views.take_token, name='take_token'),
-    path('queue-status/', views.queue_status, name='queue_status'),
-    path('admin-panel/', views.admin_panel, name='admin_panel'),
 ]
