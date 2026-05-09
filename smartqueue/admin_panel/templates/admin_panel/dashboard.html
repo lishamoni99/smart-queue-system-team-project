@@ -1,10 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<div class="stats-container">
+    <div class="stat-box">
+        <h3>Waiting</h3>
+        <p>{{ waiting_count }}</p>
+    </div>
+    <div class="stat-box">
+        <h3>Current Serving</h3>
+        <p>
+            {% if current_serving %}
+                {{ current_serving.token }}
+            {% else %}
+                None
+            {% endif %}
+        </p>
+    </div>
+    <div class="stat-box">
+        <h3>Completed</h3>
+        <p>{{ completed_count }}</p>
+    </div>
+    <div class="stat-box">
+        <h3>No-show</h3>
+        <p>{{ no_show_count }}</p>
+    </div>
+</div>
+
+<div class="actions">
+    <a href="/admin-panel/call-next/" class="btn btn-call">Call Next Token</a>
+</div>
+
+<hr>
+
+<div class="booking-management">
+    <h3>Booking Management</h3>
+    <a href="/admin-panel/cancel-tomorrow/" class="btn btn-danger">Cancel All Tomorrow's Bookings</a>
+</div>
