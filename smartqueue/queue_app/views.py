@@ -1,8 +1,6 @@
 from django.shortcuts import render, redirect
-from .models import Queue
+from .models import Queue, Student
 from history.models import QueueHistory
-from notifications.models import Notification
-
 # ---------------- SETTINGS ----------------
 TIME_PER_PERSON = 3
 
@@ -40,7 +38,7 @@ def estimate_time(position):
 
 # ---------------- HOME REDIRECT ----------------
 def home(request):
-    return render(request, 'home.html')
+    return redirect('student_login')
 
 
 # ---------------- STUDENT LOGIN ----------------
@@ -64,11 +62,10 @@ def sector_select(request):
 
     if request.method == "POST":
         sector = request.POST.get('sector')
-        print("SECTOR:", sector)
         request.session['sector'] = sector
 
-        # FIX: auto increment token logic
         queue_number = request.session.get('queue_number')
+
         if queue_number is None:
             queue_number = 1
         else:
@@ -82,61 +79,48 @@ def sector_select(request):
         request.session['token'] = token
         request.session['position'] = queue_number
 
-        # --- NOTIFICATION TRIGGER: Token Generation ---
-        Notification.objects.create(
-            student_id=request.session.get('student_id'),
-            message=f"Your token {token} has been generated for {sector}. Your current position is {queue_number}."
-        )
-
         if request.session.get('user_type') == 'guardian':
             return redirect('guardian_dashboard')
 
         return redirect('student_dashboard')
 
-    return render(request, template_name='sector_select.html')
+    return render(request, 'sector_select.html')
 
 # ---------------- STUDENT DASHBOARD ----------------
 def student_dashboard(request):
+
     if request.session.get('user_type') != 'student':
         return redirect('student_login')
-
+    student = Student.objects.get(student_id=request.session.get('student_id'))
     position = request.session.get('position', 1)
-    student_id = request.session.get('student_id')
-    waiting_time = estimate_time(position)
 
+
+    history = QueueHistory.objects.filter(
+        student_id=request.session.get('student_id')
+    ).order_by('-id')[:5]
 
     QueueHistory.objects.create(
         user_type="student",
-        student_id=student_id,
+        student_id=request.session.get('student_id'),
         phone_number=None,
         token_number=request.session.get('token'),
         sector=request.session.get('sector'),
-        waiting_time=waiting_time
+        waiting_time=estimate_time(position)
     )
 
-    # --- NOTIFICATION PART (Add this) ---
-    # 1. Feature: Time Alert (Jodi waiting time 5 min ba tar kom hoy)
-    if waiting_time <= 5:
-        # Age check koro oi student-ke ei alert-ta deya hoyeche kina
-        already_alerted = Notification.objects.filter(
-            student_id=student_id,
-            message__contains="coming in 5 minutes"
-        ).exists()
+    return render(request, 'student_dashboard.html', {
 
-        if not already_alerted:
-            Notification.objects.create(
-                student_id=student_id,
-                message=f"Please be ready! Your turn is coming in {waiting_time} minutes."
-            )
-
-    return render(request, template_name='student_dashboard.html', context={
-        'student_id': student_id,
+        'student_id': request.session.get('student_id'),
         'sector': request.session.get('sector'),
         'token': request.session.get('token'),
         'position': position,
-        'estimated_time': waiting_time
-    })
+        'estimated_time': estimate_time(position),
 
+        'history': history,
+        'student': student,
+
+
+    })
 # ---------------- GUARDIAN LOGIN ----------------
 def guardian_login(request):
     if request.method == "POST":
@@ -151,7 +135,9 @@ def guardian_login(request):
 
 
 # ---------------- GUARDIAN DASHBOARD ----------------
+
 def guardian_dashboard(request):
+
     if request.session.get('user_type') != 'guardian':
         return redirect('guardian_login')
 
@@ -159,10 +145,12 @@ def guardian_dashboard(request):
 
     if position is None:
         position = 1
-    # HISTORY SAVE (GUARDIAN)
-    QueueHistory.objects.create(
-        user_type="guardian",
 
+    # ---------------- HISTORY SAVE ----------------
+
+    QueueHistory.objects.create(
+
+        user_type="guardian",
 
         phone_number=request.session.get('phone'),
 
@@ -173,15 +161,32 @@ def guardian_dashboard(request):
         waiting_time=estimate_time(position)
 
     )
+
+    # ---------------- HISTORY FETCH ----------------
+
+    history = QueueHistory.objects.filter(
+
+        phone_number=request.session.get('phone')
+
+    ).order_by('-id')[:5]
+
+    # ---------------- RENDER ----------------
+
     return render(request, 'guardian_dashboard.html', {
+
         'phone': request.session.get('phone'),
+
         'sector': request.session.get('sector'),
+
         'token': request.session.get('token'),
+
         'position': position,
-        'estimated_time': estimate_time(position)
+
+        'estimated_time': estimate_time(position),
+
+        'history': history
+
     })
-
-
 
 # ---------------- CANCEL TOKEN ----------------
 def cancel_token(request):
