@@ -34,6 +34,7 @@ urlpatterns = [
     path('emergency', include('emergency_app.urls')),
     path('review/', include('review.urls')),
     path('feedback/', include('feedback.urls')),
+    path('faq/', include('faq_app.urls')),
 ]
 
 

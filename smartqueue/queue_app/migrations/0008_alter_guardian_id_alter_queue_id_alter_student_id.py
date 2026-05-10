@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('queue_app', '0007_queue_status_alter_guardian_id_alter_queue_id_and_more'),
+        ('queue_app', '0002_remove_queue_status'),
     ]
 
     operations = [

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Frequently Asked Questions</title>
+</head>
+<body>
+    <div style="max-width: 800px; margin: auto; padding: 20px;">
+        <h2>Common Questions</h2>
+        <hr>
+
+        {% if faqs %}
+            {% for faq in faqs %}
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color: #007bff;">Q: {{ faq.question }}</h3>
+                    <p><strong>A:</strong> {{ faq.answer }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No FAQs available right now.</p>
+        {% endif %}
+
+        <br>
+        <a href="{% url 'student_dashboard' %}">Back to Home</a>
+    </div>
+</body>
+</html>
