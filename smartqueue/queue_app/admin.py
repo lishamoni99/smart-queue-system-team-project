@@ -6,3 +6,4 @@ from .models import Student, Guardian, Queue
 
 admin.site.register(Student)
 admin.site.register(Guardian)
+

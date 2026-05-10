@@ -34,13 +34,7 @@ class Queue(models.Model):
         ('Office', 'UAP Office'),
         ('Canteen', 'Canteen'),
     ]
-    STATUS_CHOICES = [
-        ('waiting', 'Waiting'),
-        ('serving', 'Serving'),
-        ('done', 'Completed'),
-        ('no_show', 'No-show'),
-    ]
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='waiting')
+
 
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     sector = models.CharField(max_length=20, choices=SECTOR_CHOICES)

@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
     'notifications',
     'emergency_app',
+    'admin_panel',
     'queue_app',
     'history',
     'review',
