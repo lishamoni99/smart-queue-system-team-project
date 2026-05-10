@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'faq_app',
     'notifications',
     'emergency_app',
     'admin_panel',
