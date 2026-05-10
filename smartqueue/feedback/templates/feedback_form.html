@@ -2,23 +2,67 @@
 <html>
 <head>
     <title>Feedback Form</title>
+
     <style>
-        body { font-family: Arial; text-align: center; background-color: #1a1a2e; color: white; padding-top: 50px; }
-        form { display: inline-block; background: #16213e; padding: 20px; border-radius: 10px; }
-        input, textarea { width: 100%; margin-bottom: 10px; padding: 8px; border-radius: 5px; border: none; }
-        button { background-color: #0f3460; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #74ebd5, #acb6e5);
+        }
+
+        .container {
+            width: 40%;
+            margin: auto;
+            margin-top: 80px;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0px 0px 15px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+        }
     </style>
+
 </head>
+
 <body>
-    <h2>Submit Your Feedback</h2>
+
+<div class="container">
+
+    <h2>💬 Give Feedback</h2>
+
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        <input type="text" name="student_name" placeholder="Enter Your Name" required>
-        <input type="number" name="rating" placeholder="Rating (1-5)" min="1" max="5" required>
-        <textarea name="comment" placeholder="Write your feedback here..." rows="4" required></textarea>
-        <label>Upload Photo:</label>
-        <input type="file" name="image" accept="image/*" capture="none">
+
+        {{ form.as_p }}
+
         <button type="submit">Submit</button>
     </form>
+
+</div>
+
 </body>
 </html>

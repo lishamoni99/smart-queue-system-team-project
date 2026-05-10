@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'queue_app',
     'history',
     'review',
+    'feedback',
 ]
 
 MIDDLEWARE = [

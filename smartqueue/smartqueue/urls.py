@@ -33,7 +33,9 @@ urlpatterns = [
     path('notifications', include('notifications.urls')),
     path('emergency', include('emergency_app.urls')),
     path('review/', include('review.urls')),
+    path('feedback/', include('feedback.urls')),
 ]
+
 
 # ---------------- MEDIA FILES ----------------
 if settings.DEBUG:

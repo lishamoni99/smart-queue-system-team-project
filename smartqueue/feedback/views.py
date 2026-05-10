@@ -1,20 +1,13 @@
-
 from django.shortcuts import render, redirect
-from .models import Feedback
+from .forms import FeedbackForm
 
-def feedback_view(request):
+def create_feedback(request):
+    form = FeedbackForm()
+
     if request.method == 'POST':
-        name = request.POST.get('student_name')
-        rate = request.POST.get('rating')
-        msg = request.POST.get('comment')
-        image = request.FILES.get('image')
+        form = FeedbackForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('student_dashboard')
 
-        Feedback.objects.create(
-           student_name = name,
-           rating = rate,
-           comment = msg,
-           image = image
-        )
-        return redirect('/')
-    return render(request, 'feedback_form.html')
-
+    return render(request, 'feedback_form.html', {'form': form})
